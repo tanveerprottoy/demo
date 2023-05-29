@@ -1,8 +1,7 @@
-import { Injectable, CanActivate, ExecutionContext, Inject } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { RbacsService } from "../../modules/rbacs/rbacs.service";
 import { UserRole } from "../enums/user.role";
-import StringUtils from "../../utils/string.utils";
 
 export interface AuthGuardConfig {
     disabled?: boolean;
@@ -46,14 +45,23 @@ export class AuthGuard implements CanActivate {
     }
 
     async validateRequest(req: any): Promise<boolean> {
-        const data = await this.rbacsService.findAll(
-            UserRole.User
-        );
-        console.log("req.url: ", req.url)
-        console.log("req.urls: ", StringUtils.split(req.url, "/"))
-        console.log("req.params: ", req.params)
-        // check if role has access to the endpoint
-        // const endpoint = data.endpoints.find(e => e == )
-        return true;
+        try {
+            const data = await this.rbacsService.findAll(
+                UserRole.User
+            );
+            if(!req["customRouteName"]) {
+                return false;
+            }
+            // check if role has access to the endpoint
+            const endpoint = data[0].endpoints.find(e => e.name === req["customRouteName"])
+            console.log("endpoint: ", endpoint)
+            if(!endpoint) {
+                return false;
+            }
+            return true;
+        }
+        catch(e) {
+            return false;
+        }
     }
 }

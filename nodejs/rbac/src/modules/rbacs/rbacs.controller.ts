@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Delete } from '@nestjs/common';
 import { RbacsService } from './rbacs.service';
 import { CreateRbacDto } from './dto/create-rbac.dto';
 import { Constants } from "../../utils/constants";
@@ -19,7 +19,7 @@ export class RbacsController {
         return await this.rbacService.create(dto);
     }
 
-    @Get("",)
+    @Get()
     async findAll() {
         return await this.rbacService.findAll(UserRole.User);
     }
@@ -27,5 +27,10 @@ export class RbacsController {
     @Get(":id")
     async findOne(@Param("id") id: string) {
         return await this.rbacService.findOne(id);
+    }
+
+    @Delete(":id")
+    async remove(@Param("id") id: string) {
+        return this.rbacService.remove(id);
     }
 }

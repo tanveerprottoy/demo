@@ -14,7 +14,7 @@ export class RbacsService {
     }
 
     async findAll(role: string) {
-        return await this.rbacsRepository.readMany(
+        return await this.rbacsRepository.readManyStream(
             {
                 role: role
             },
@@ -26,4 +26,8 @@ export class RbacsService {
     async findOne(id: string) {
         return await this.rbacsRepository.readOne(id);
     }
+
+    async remove(id: string) {
+        return await this.rbacsRepository.delete(id);
+    };
 }

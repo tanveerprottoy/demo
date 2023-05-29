@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import { DbClientInstance } from "./libs/mongodb";
 import { Constants } from "./utils/constants";
 import { VersioningType } from "@nestjs/common";
+import { RequestInterceptor } from "./components/interceptors/request.interceptor";
+import { routeResolver } from "./components/middlewares/route-resolver-function.middleware";
 
 async function bootstrap() {
     await DbClientInstance.init(
@@ -19,6 +21,10 @@ async function bootstrap() {
     app.enableVersioning({
         type: VersioningType.URI,
     });
+    app.useGlobalInterceptors(
+        new RequestInterceptor()
+    );
+    app.use(routeResolver);
     await app.listen(8080);
 }
 
